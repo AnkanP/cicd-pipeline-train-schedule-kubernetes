@@ -17,11 +17,10 @@ pipeline {
                 branch 'master'
             }
             steps {
-                script {
-                    app = docker.build(DOCKER_IMAGE_NAME)
-                    app.inside {
-                        sh 'echo Hello, World!'
-                    }
+                
+                   def app = docker.build(DOCKER_IMAGE_NAME)
+                    
+                   
                 }
             }
         }
@@ -30,12 +29,12 @@ pipeline {
                 branch 'master'
             }
             steps {
-                script {
+                
                     docker.withRegistry('https://registry.hub.docker.com', 'docker_hub_login') {
                         app.push("${env.BUILD_NUMBER}")
                         app.push("latest")
                     }
-                }
+                
             }
         }
         stage('DeployToProduction') {
