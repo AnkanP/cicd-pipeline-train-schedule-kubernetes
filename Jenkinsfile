@@ -17,12 +17,14 @@ pipeline {
                 branch 'master'
             }
             steps {
-                
-                   sh 'docker build -t ${DOCKER_IMAGE_NAME} .'
-
+                script {
+                    app = docker.build(DOCKER_IMAGE_NAME)
+                    app.inside {
+                        sh 'echo Hello, World!'
+                    }
                 }
             }
-        
+        }
         stage('Push Docker Image') {
             when {
                 branch 'master'
@@ -34,7 +36,6 @@ pipeline {
                         app.push("latest")
                     }
                 }
-                
             }
         }
         stage('DeployToProduction') {
@@ -44,8 +45,8 @@ pipeline {
             steps {
                 input 'Deploy to Production?'
                 milestone(1)
-                //implement Kubernetes deployment here
+                
             }
         }
-	}
+    }
 }
